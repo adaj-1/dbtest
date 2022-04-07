@@ -11,11 +11,11 @@ const Navigation = () => {
       <Container>
       <Navbar.Brand href="/" className="pe-3"><b>The Bookish Calgarian</b></Navbar.Brand>
       <Nav className="justify-content-end">
-        <Nav.Link href="../pages/books">Search Books</Nav.Link>
-        <Nav.Link href="../pages/wishlist">My Wishlist</Nav.Link>
-        <Nav.Link href="../pages/profile">My Profile</Nav.Link>
-        <Nav.Link href="../pages/sell">Sell Books</Nav.Link>
-        <Nav.Link href="../pages/customers">Search Customers <Badge>Admin</Badge></Nav.Link>
+        <Nav.Link href="/books">Search Books</Nav.Link>
+        <Nav.Link href="/wishlist">My Wishlist</Nav.Link>
+        <Nav.Link href="/profile">My Profile</Nav.Link>
+        <Nav.Link href="/sell">Sell Books</Nav.Link>
+        <Nav.Link href="/customers">Search Customers <Badge>Admin</Badge></Nav.Link>
       </Nav>
       </Container>
     </Navbar>
