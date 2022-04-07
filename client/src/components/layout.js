@@ -11,7 +11,7 @@ const Layout = ({ pageTitle, children }) => {
       <div>
         <title>{pageTitle}</title>
         <main>
-          <Navigation></Navigation>
+          <Navigation />
           <br></br>
           <Container>{children}</Container>
         </main>
