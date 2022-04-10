@@ -1,14 +1,57 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import * as React from "react"
+import { useEffect, useState } from 'react'
 
 import Alert from "react-bootstrap/Alert"
 import Col from "react-bootstrap/Col"
 import Form from "react-bootstrap/Form"
 import Layout from "../components/layout"
 import Row from "react-bootstrap/Row"
+import Axios from 'axios'
 
 export const SellPage = ({ placeholder }) => {
+    //const [num_books, setNumBooks] = useState('');
+    const [book_id, setBookID] = useState('');
+    const [title, setTitle] = useState('');
+    const [price, setPrice] = useState('');
+    const [isbn, setISBN] = useState('');
+    const [author, setAuthor] = useState('');
+    const [quality, setQuality] = useState('');
+    const [pubDate, setPubDate] = useState('');
+    const [lang, setLang] = useState('');
+    const [genre, setGenre] = useState('');
+    const [pageC, setPageC] = useState('');
+    const [wordC, setWordC] = useState('');
+    const [bookstore, setBookstore] = useState('');
+    const [shelf, setShelf] = useState('');
+    //const [seller_id, setSellerID] = useState('');            TODO
+    
+    useEffect (() => {
+        Axios.get('http://localhost:3001/api/getNumBooks').then((response) => {
+            setBookID(response.data[0].num_books + 1);
+        })
+    }, [])
+
+    const sellBook = () => {
+        Axios.post('http://localhost:3001/api/insertBook',{
+            a_book_id: book_id,
+            a_title: title,
+            a_price: price,
+            a_isbn: isbn,
+            a_author: author,
+            a_quality: quality,
+            a_pubDate: pubDate,
+            a_lang: lang,
+            a_genre: genre,
+            a_pageC: pageC,
+            a_wordC: wordC,
+            a_bookstore: bookstore,
+            a_shelf: shelf
+        })
+        
+    }
+    
     return (
         <Layout pageTitle="Sell Books">
 
@@ -21,18 +64,22 @@ export const SellPage = ({ placeholder }) => {
 
             <p>Please key in information for the book you are selling here.</p>
             <Form>
-                <Row>
+                <Row>                    
                     <Col>
                         <Form.Label>Title</Form.Label>
-                        <Form.Control type="text" placeholder="Book Title" />
+                        <Form.Control type="text" placeholder="Book Title" onChange={(e) => { setTitle(e.target.value) }}/>
                     </Col>
                     <Col>
                         <Form.Label>Price</Form.Label>
-                        <Form.Control type="number" placeholder="($) CAD" />
+                        <Form.Control type="number" placeholder="($) CAD" onChange={(e) => { setPrice(e.target.value) }} />
                     </Col>
                     <Col>
                         <Form.Label>ISBN</Form.Label>
-                        <Form.Control type="number" placeholder="ISBN" />
+                        <Form.Control type="number" placeholder="ISBN" onChange={(e) => { setISBN(e.target.value) }} />
+                    </Col>
+                    <Col>
+                        <Form.Label>Author</Form.Label>
+                        <Form.Control type="text" placeholder="Author" onChange={(e) => { setAuthor(e.target.value) }} />
                     </Col>
                 </Row>
 
@@ -41,15 +88,15 @@ export const SellPage = ({ placeholder }) => {
                 <Row>
                     <Col>
                         <Form.Label>Publication Date</Form.Label>
-                        <Form.Control type="date" />
+                        <Form.Control type="date" onChange={(e) => { setPubDate(e.target.value)}} />
                     </Col>
                     <Col>
                         <Form.Label>Page Count</Form.Label>
-                        <Form.Control type="text" placeholder="Page Count" />
+                        <Form.Control type="text" placeholder="Page Count" onChange={(e) => { setPageC(e.target.value) }} />
                     </Col>
                     <Col>
                         <Form.Label>Word Count</Form.Label>
-                        <Form.Control type="text" placeholder="Optional" />
+                        <Form.Control type="text" placeholder="Optional" onChange={(e) => { setWordC(e.target.value) }} />
                     </Col>
                 </Row>
                 
@@ -58,7 +105,7 @@ export const SellPage = ({ placeholder }) => {
                 <Row>
                     <Col>
                         <Form.Label>Fiction/Non-Fiction</Form.Label>
-                        <Form.Select aria-label="Genre">
+                        <Form.Select aria-label="Genre" onChange={(e) => { setGenre(e.target.value) }} >
                             <option selected>Select Option</option>
                             <option value="Fiction">Fiction</option>
                             <option value="Non-Fiction">Non-Fiction</option>
@@ -113,7 +160,7 @@ export const SellPage = ({ placeholder }) => {
                 <Row>
                     <Col>
                         <Form.Label>Quality</Form.Label>
-                        <Form.Select>
+                        <Form.Select onChange={(e) => { setQuality(e.target.value) }} >
                             <option value="New Condition">New Condition</option>
                             <option value="Used Condition">Used Condition</option>
                             <option value="Bad Condition">Bad Condition</option>
@@ -121,7 +168,7 @@ export const SellPage = ({ placeholder }) => {
                     </Col>
                     <Col>
                         <Form.Label>Language</Form.Label>
-                        <Form.Select aria-label="Language">
+                        <Form.Select aria-label="Language" onChange={(e) => { setLang(e.target.value) }} >
                             <option value="English">English</option>
                             <option value="Chinese">Chinese</option>
                             <option value="Spanish">Spanish</option>
@@ -134,13 +181,17 @@ export const SellPage = ({ placeholder }) => {
                     </Col>
                     <Col>
                         <Form.Label>Bookstore</Form.Label>
-                        <Form.Control type="text" placeholder="Bookstore" />
+                        <Form.Control type="text" placeholder="Bookstore" onChange={(e) => { setBookstore(e.target.value) }} />
+                    </Col>
+                    <Col>
+                        <Form.Label>Shelf</Form.Label>
+                        <Form.Control type="text" placeholder="Shelf" onChange={(e) => { setShelf(e.target.value) }} />
                     </Col>
                 </Row>
 
                 <br></br>
                 
-                <a href="/sell" class="btn btn-primary" role="button">Sell Book</a>
+                <a href="/sell" class="btn btn-primary" role="button" onClick={sellBook}>Sell Book</a>
             </Form>
         </Layout>
     )

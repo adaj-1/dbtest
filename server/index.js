@@ -84,6 +84,41 @@ app.put('/api/update', (req, res) => {
 });
 
 
+app.get('/api/getNumBooks', (req, res) => {
+    const sqlSelect = "SELECT COUNT(book_id) as num_books FROM bookish_calgarian_db.books;"
+    db.query(sqlSelect, (err, result) => {
+        res.send(result);
+    });
+});
+
+app.post('/api/insertBook', (req, res) => {
+    const book_id = req.body.a_book_id;
+    const title = req.body.a_title;
+    const price = req.body.a_price;
+    const isbn = req.body.a_isbn;
+    const author = req.body.a_author;
+    const quality = req.body.a_quality;
+    const pubDate = req.body.a_pubDate;
+    const lang = req.body.a_lang;
+    const genre = req.body.a_genre;
+    const pageC = req.body.a_pageC;
+    const wordC = req.body.a_wordC;
+    const bookstore = req.body.a_bookstore;
+    const shelf = req.body.a_shelf;
+    //TODO const buyer_id
+    //TODO const seller_id
+    //TODO fix null values
+    const sqlInsert = "INSERT INTO bookish_calgarian_db.books VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,?);"
+    db.query(sqlInsert, [book_id, title, price, isbn, author, quality, pubDate, lang, 
+                         genre, pageC, wordC, bookstore, shelf, null, null ], (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log("Successfully inserted book.");
+    });
+});
+
+
 app.listen(3001, () => {
     console.log('running on port 3001');
 });

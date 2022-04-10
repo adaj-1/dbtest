@@ -18,6 +18,7 @@ function HomePage() {
   const [nametest, setName] = useState('');
   const [nameList, setNameList] = useState([]);
   const [updateName, setUpdate] = useState('');
+  
 
   useEffect(() => {
     Axios.get('http://localhost:3001/api/gettestme').then((response) => {
