@@ -1,17 +1,42 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import * as React from "react"
+import { useEffect, useState } from 'react'
 
 import Form from "react-bootstrap/Form"
 import Layout from "../components/layout"
-import Search from '../components/search'
+import Col from "react-bootstrap/Col"
+import Row from "react-bootstrap/Row"
+import Axios from 'axios'
 
 export const BooksPage = () => {
+
+  const [search, setSearch] = useState('');
+  const [bookList, setBookList] = useState([]);
+
+  const findBook = () => {
+    Axios.get(`http://localhost:3001/api/searchBooks/${search}`).then((response) => {
+      setBookList(response.data);
+    });
+  };
+
   return (
     <Layout pageTitle="Books">
-      <Search placeholder="Search books by title, ISBN or author."></Search>
+      <Form>
+        <Form.Group className="mb-3" controlId="formSearch">
+          <Row>
+            <Col xs="11">
+              <Form.Control type="text" placeholder="Search books by title." onChange={(e) => { setSearch(e.target.value) }} />
+            </Col>
+            <Col xs="1">
+              <button type="button" class="btn btn-primary" onClick={findBook}>Search</button>
+            </Col>
+          </Row>
+        </Form.Group>
+      </Form>
+      
       <br></br>
-      <p>Your search for <b>"The Great Gatsby"</b> returned:</p>
+      <p>Your search for <b>{search}</b> returned:</p>
       <br></br>
       <table class="table table-sm">
         <thead>
@@ -29,48 +54,22 @@ export const BooksPage = () => {
             <th scope="col">Bookstore</th>
             <th scope="col">Shelf</th>
           </tr>
-          <tr>
-            <th scope="row">1</th>
-            <td>The Great Gatsby</td>
-            <td>$3.99</td>
-            <td>0000001</td>
-            <td>9780333791035</td>
-            <td>F. Scott Fitzgerald</td>
-            <td>Used</td>
-            <td>04/10/1925</td>
-            <td>English</td>
-            <td>Historical Fiction</td>
-            <td>Books Between Friends</td>
-            <td>ML 324 .C54</td>
+        {bookList.map((val) => {
+          return <tr>
+            <th>{val.Book_ID}</th>    
+            <th>{val.Title}</th>
+            <th>{val.Price}</th>
+            <th>{val.Book_ID}</th>
+            <th>{val.ISBN}</th>
+            <th>{val.Author}</th>
+            <th>{val.Quality}</th>
+            <th>{val.Publication_date}</th>
+            <th>{val.Written_language}</th>
+            <th>{val.Genre}</th>
+            <th>{val.Bookstore}</th>
+            <th>{val.Shelf}</th>
           </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>The Great Gatsby</td>
-            <td>$10.99</td>
-            <td>1203459</td>
-            <td>9780333791035</td>
-            <td>F. Scott Fitzgerald</td>
-            <td>New</td>
-            <td>04/10/1925</td>
-            <td>English</td>
-            <td>Historical Fiction</td>
-            <td>Peace Bridge Books</td>
-            <td>ML 325 .C24</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>The Great Gatsby</td>
-            <td>$10.99</td>
-            <td>1903652</td>
-            <td>9780333791035</td>
-            <td>F. Scott Fitzgerald</td>
-            <td>New</td>
-            <td>04/10/1925</td>
-            <td>English</td>
-            <td>Historical Fiction</td>
-            <td>Dalhousie Books</td>
-            <td>ML 125 .C89</td>
-          </tr>
+        })}
         </thead>
       </table>
     </Layout>

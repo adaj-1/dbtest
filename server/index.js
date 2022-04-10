@@ -119,6 +119,20 @@ app.post('/api/insertBook', (req, res) => {
 });
 
 
+app.get('/api/searchBooks/:book', (req, res) => {
+    const findBook = req.params.book;
+
+    const sqlSelect = "SELECT * FROM bookish_calgarian_db.books WHERE Title = ?;"
+    db.query(sqlSelect, findBook, (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(result);
+            res.send(result);
+    });
+});
+
+
 app.listen(3001, () => {
     console.log('running on port 3001');
 });
