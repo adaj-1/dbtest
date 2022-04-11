@@ -26,7 +26,7 @@ export const BooksPage = () => {
         <Form.Group className="mb-3" controlId="formSearch">
           <Row>
             <Col xs="11">
-              <Form.Control type="text" placeholder="Search books by title." onChange={(e) => { setSearch(e.target.value) }} />
+              <Form.Control type="text" placeholder="Search books by Title, ISBN, or Author." onChange={(e) => { setSearch(e.target.value) }} />
             </Col>
             <Col xs="1">
               <button type="button" class="btn btn-primary" onClick={findBook}>Search</button>
@@ -56,18 +56,18 @@ export const BooksPage = () => {
           </tr>
         {bookList.map((val) => {
           return <tr>
-            <th>{val.Book_ID}</th>    
-            <th>{val.Title}</th>
-            <th>{val.Price}</th>
-            <th>{val.Book_ID}</th>
-            <th>{val.ISBN}</th>
-            <th>{val.Author}</th>
-            <th>{val.Quality}</th>
-            <th>{val.Publication_date}</th>
-            <th>{val.Written_language}</th>
-            <th>{val.Genre}</th>
-            <th>{val.Bookstore}</th>
-            <th>{val.Shelf}</th>
+            <td>{val.Book_ID}</td>    
+            <td>{val.Title}</td>
+            <td>{val.Price}</td>
+            <td>{val.Book_ID}</td>
+            <td>{val.ISBN}</td>
+            <td>{val.Author}</td>
+            <td>{val.Quality}</td>
+            <td>{val.Publication_date}</td>
+            <td>{val.Written_language}</td>
+            <td>{val.Genre}</td>
+            <td>{val.Bookstore}</td>
+            <td>{val.Shelf}</td>
           </tr>
         })}
         </thead>

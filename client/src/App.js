@@ -9,6 +9,7 @@ import NotFoundPage from './pages/404';
 import ProfilePage from './pages/profile';
 import SellPage from './pages/sell';
 import WishlistPage from './pages/wishlist';
+import LoginPage from './pages/login';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Router>
         <Routes>
           <Route exact path="/" element={<HomePage />} />
+          <Route exact path="/login" element={<LoginPage />} /> 
           <Route exact path="/books" element={<BooksPage />} />
           <Route exact path="/customers" element={<CustomersPage />} />
           <Route exact path="/profile" element={<ProfilePage />} />

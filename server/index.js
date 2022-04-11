@@ -1,8 +1,11 @@
 const express = require('express');
+const path = require('path');
+const basicAuth = require('express-basic-auth');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 const mysql = require('mysql');
+const cookieParser = require('cookie-parser');
 
 const db = mysql.createPool({
     host: "localhost",
@@ -34,6 +37,7 @@ app.get('/', (req ,res) => {
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 
 app.get('/api/gettestme', (req, res) => {
     const sqlSelect = "SELECT * FROM bookish_calgarian_db.testme;"
@@ -84,6 +88,50 @@ app.put('/api/update', (req, res) => {
 });
 
 
+// START OF REAL CODE
+
+// citation: https://blog.logrocket.com/how-to-secure-react-app-login-authentication/
+const auth = basicAuth({
+    users: {
+        'admin': 'secret',  //admin
+        'user': 'pass',    //buyer/seller
+    }
+});
+
+app.use(cookieParser('82e4e438a0705fabf61f9854e3b575af'));
+
+app.get('/authenticate', auth, (req, res) => {
+    const options = {
+        httpOnly: true,
+        signed: true,
+    }
+    if (req.auth.user === 'admin') {
+        res.cookie('name', 'admin', options).send({ screen: 'admin' });
+    } else if (req.auth.user === 'user') {
+        res.cookie('name', 'user', options).send({ screen: 'user' });
+    };
+});
+
+app.get('/read-cookie', (req, res) => {
+  if (req.signedCookies.name === 'admin') {
+    console.log({ screen: 'admin' });
+    res.send({ screen: 'admin' });
+  } else if (req.signedCookies.name === 'user') {
+    console.log({ screen: 'user' });
+    res.send({ screen: 'user' });
+  } else {
+    console.log({ screen: 'admin' });  
+    res.send({ screen: 'auth' });
+  }
+});
+
+app.get('/clear-cookie', (req, res) => {
+  res.clearCookie('name').end();
+});
+
+// end citation
+
+
 app.get('/api/getNumBooks', (req, res) => {
     const sqlSelect = "SELECT COUNT(book_id) as num_books FROM bookish_calgarian_db.books;"
     db.query(sqlSelect, (err, result) => {
@@ -122,7 +170,7 @@ app.post('/api/insertBook', (req, res) => {
 app.get('/api/searchBooks/:book', (req, res) => {
     const findBook = req.params.book;
 
-    const sqlSelect = "SELECT * FROM bookish_calgarian_db.books WHERE Title = ?;"
+    const sqlSelect = "SELECT * FROM bookish_calgarian_db.books WHERE ? IN (Title, ISBN, Author);"
     db.query(sqlSelect, findBook, (err, result) => {
         if (err)
             console.log(err);
@@ -132,9 +180,71 @@ app.get('/api/searchBooks/:book', (req, res) => {
     });
 });
 
+app.get('/api/searchUsers/:user', (req, res) => {
+    const findUsers = req.params.user;
+
+    const sqlSelect = "SELECT * FROM bookish_calgarian_db.users WHERE ? IN (User_ID, Role);"
+    db.query(sqlSelect, findUsers, (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(result);
+            res.send(result);
+    });
+});
+
+app.delete('/api/deleteUser/:user', (req, res) => {
+    const delete_user = req.params.user;
+
+    const sqlDELETE = "DELETE FROM bookish_calgarian_db.users WHERE User_ID = ?;"
+    db.query(sqlDELETE, delete_user, (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(`Successfully deleted ${delete_user}.`);
+    });
+});
+
+app.put('/api/updateUser', (req, res) => {
+    const updateUser = req.body.User
+    const updateRole = req.body.Role;
+    const BDU = req.body.Buyer_discount_usage;
+    const SDU = req.body.Seller_discount_usage;
+    console.log(`input values: ${updateUser},  ${updateRole}, ${BDU}, and ${SDU}`);
+
+    const sqlUpdate = "UPDATE bookish_calgarian_db.users SET Role = ?, Buyer_discount_usage = ? , Seller_discount_usage = ? WHERE User_ID = ?"
+    db.query(sqlUpdate, [updateRole, BDU, SDU, updateUser], (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(`Successfully updated ${updateUser}.`);
+    });
+});
+
+app.get('/api/getNumUsers', (req, res) => {
+    const sqlSelect = "SELECT COUNT(User_ID) as userIDs FROM bookish_calgarian_db.users;"
+    db.query(sqlSelect, (err, result) => {
+        res.send(result);
+    });
+});
+
+app.post('/api/addUser', (req, res) => {
+    const a_user = req.body.User
+    const a_pass = req.body.Password
+    const a_role = req.body.Role;
+    const BDU = req.body.Buyer_discount_usage;
+    const SDU = req.body.Seller_discount_usage;
+    const a_wishlist = req.body.WishlistID;
+
+    const sqlInsert = "INSERT INTO bookish_calgarian_db.users VALUES (?, ?, ?, ?, ?, ?);"
+    db.query(sqlInsert, [a_user, a_pass, a_role, BDU, SDU, a_wishlist], (err, result) => {
+            if (err)
+                console.log(err);
+            else
+                console.log("Successfully added user.");
+        });
+});
 
 app.listen(3001, () => {
     console.log('running on port 3001');
 });
-
-

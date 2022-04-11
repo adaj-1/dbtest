@@ -1,55 +1,73 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-import * as React from "react"
+import * as React from "react";
+import { useEffect, useState } from 'react';
+import Col from 'react-bootstrap/Col';
+import Layout from "../components/layout";
+import Axios from 'axios';
+import LoginPage from './login';
 
-import Col from 'react-bootstrap/Col'
-import Layout from "../components/layout"
 
 export const ProfilePage = () => {
+  const [user, setUser] = useState(false);
+  const [admin, setAdmin] = useState(false);
+  const [auth, setAuth] = useState(false);
+  const test = true;
+  
+  useEffect(() => {
+    Axios.get('http://localhost:3001/read-cookie').then((response) => {
+      localStorage.setItem("user_type", response.data); 
+    })
+  }, [])
+
+  const Profile = () => {
+  
+  }
+
   return (
     <Layout pageTitle="My Profile">
-    <h1 class="text-center display-4">My Profile</h1>
-    <p>According to your purchase and sales history, you are eligible for <b>9</b> remaining discounts!</p>
+      <h1 class="text-center display-4">My Profile</h1>
+      <p>According to your purchase and sales history, you are eligible for <b>9</b> remaining discounts!</p>
 
-    <h3>My Discounts</h3>
-    <Col xs="4">
-    <table class="table table-sm">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Date Earned</th>
-          <th scope="col">Status</th>
-        </tr>
-        <tr>
-          <td scope="row">1</td>
-          <td>10/03/2021</td>
-          <td class="text-danger"><b>Used</b></td>
-        </tr>
-        <tr>
-          <td scope="row">2</td>
-          <td>07/03/2022</td>
-          <td class="text-success"><b>Unused</b></td>
-        </tr>
-      </thead>
-    </table>
-    </Col>
+      <h3>My Discounts</h3>
+      <Col xs="4">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Date Earned</th>
+              <th scope="col">Status</th>
+            </tr>
+            <tr>
+              <td scope="row">1</td>
+              <td>10/03/2021</td>
+              <td class="text-danger"><b>Used</b></td>
+            </tr>
+            <tr>
+              <td scope="row">2</td>
+              <td>07/03/2022</td>
+              <td class="text-success"><b>Unused</b></td>
+            </tr>
+          </thead>
+        </table>
+      </Col>
 
-    <br></br>
+      <br></br>
 
-    <h3>My Purchase History</h3>
-    <table class="table table-sm">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Title</th>
-          <th scope="col">Price</th>
-          <th scope="col">Book ID</th>
-          <th scope="col">ISBN</th>
-          <th scope="col">Author</th>
-          <th scope="col">Quality</th>
-          <th scope="col">Transaction Date</th>
-          <th scope="col">Bookstore</th>
-        </tr>
+      <h3>My Purchase History</h3>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Price</th>
+            <th scope="col">Book ID</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">Author</th>
+            <th scope="col">Quality</th>
+            <th scope="col">Transaction Date</th>
+            <th scope="col">Bookstore</th>
+          </tr>
           <tr>
             <th scope="row">1</th>
             <td>The Great Gatsby</td>
@@ -61,25 +79,25 @@ export const ProfilePage = () => {
             <td>10/03/2021</td>
             <td>Fish Creek Provincial Bookstore</td>
           </tr>
-      </thead>
-    </table>
+        </thead>
+      </table>
 
-    <br></br>
-    
-    <h3>My Sale History</h3>
-    <table class="table table-sm">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Title</th>
-          <th scope="col">Price</th>
-          <th scope="col">Book ID</th>
-          <th scope="col">ISBN</th>
-          <th scope="col">Author</th>
-          <th scope="col">Quality</th>
-          <th scope="col">Transaction Date</th>
-          <th scope="col">Bookstore</th>
-        </tr>
+      <br></br>
+
+      <h3>My Sale History</h3>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Price</th>
+            <th scope="col">Book ID</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">Author</th>
+            <th scope="col">Quality</th>
+            <th scope="col">Transaction Date</th>
+            <th scope="col">Bookstore</th>
+          </tr>
           <tr>
             <th scope="row">1</th>
             <td>To Kill A Mockingbird</td>
@@ -91,8 +109,8 @@ export const ProfilePage = () => {
             <td>10/03/2021</td>
             <td>Fish Creek Provincial Bookstore</td>
           </tr>
-      </thead>
-    </table>
+        </thead>
+      </table>
     </Layout>
   )
 }

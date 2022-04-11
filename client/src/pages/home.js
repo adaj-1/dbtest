@@ -18,6 +18,7 @@ function HomePage() {
   const [nametest, setName] = useState('');
   const [nameList, setNameList] = useState([]);
   const [updateName, setUpdate] = useState('');
+
   
 
   useEffect(() => {
@@ -48,6 +49,7 @@ function HomePage() {
     setUpdate("");  //resetting updatename to empty
   };
 
+  
 
   return (
     <Layout pageTitle="The Bookish Calgarian">
@@ -93,9 +95,6 @@ function HomePage() {
 
         </Form>
       </div >
-
-
-
     </Layout>
   );
 }
