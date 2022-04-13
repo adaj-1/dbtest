@@ -54,12 +54,12 @@ export const BooksPage = () => {
             <th scope="col">Bookstore</th>
             <th scope="col">Shelf</th>
           </tr>
-        {bookList.map((val) => {
+        {bookList.map((val, index) => {
           return <tr>
-            <td>{val.Book_ID}</td>    
+            <td>{index + 1}</td>
             <td>{val.Title}</td>
             <td>{val.Price}</td>
-            <td>{val.Book_ID}</td>
+            <td>{val.Book_ID}</td> 
             <td>{val.ISBN}</td>
             <td>{val.Author}</td>
             <td>{val.Quality}</td>

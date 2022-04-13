@@ -1,10 +1,33 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import * as React from "react"
-
+import { useEffect, useState } from 'react';
 import Layout from "../components/layout"
+import Axios from 'axios';
 
 export const WishlistPage = () => {
+  const testUser = 'admin';
+  const [wishlistID, setWishListID] = useState('');
+  const [wishList, setWishList] = useState([]);
+  const [bookList, setBookList] = useState('');
+
+  useEffect(() => {
+    Axios.get(`http://localhost:3001/api/searchUsers/${testUser}`).then((response) => {
+      setWishListID(response.data[0].Wishlist_ID);
+    });
+
+    Axios.get(`http://localhost:3001/wishlist/${testUser}`).then((response) => {
+      setWishList(response.data);
+    })
+
+    Axios.get(`http://localhost:3001/wishlistBooks`, {
+      IDs: wishList
+    }).then((response) => {
+      setBookList(response.data);
+    })
+
+  }, [])
+
   return (
     <Layout pageTitle="My Wishlist">
     <h1 class="text-center display-4">My Wishlist</h1>

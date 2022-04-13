@@ -130,8 +130,6 @@ app.get('/clear-cookie', (req, res) => {
 });
 
 // end citation
-
-
 app.get('/api/getNumBooks', (req, res) => {
     const sqlSelect = "SELECT COUNT(book_id) as num_books FROM bookish_calgarian_db.books;"
     db.query(sqlSelect, (err, result) => {
@@ -166,11 +164,10 @@ app.post('/api/insertBook', (req, res) => {
     });
 });
 
-
 app.get('/api/searchBooks/:book', (req, res) => {
     const findBook = req.params.book;
 
-    const sqlSelect = "SELECT * FROM bookish_calgarian_db.books WHERE ? IN (Title, ISBN, Author);"
+    const sqlSelect = "SELECT * FROM bookish_calgarian_db.books WHERE ? IN (Title, ISBN, Author) AND Buyer_ID IS NULL;"
     db.query(sqlSelect, findBook, (err, result) => {
         if (err)
             console.log(err);
@@ -243,6 +240,122 @@ app.post('/api/addUser', (req, res) => {
             else
                 console.log("Successfully added user.");
         });
+});
+
+app.get('/api/searchPurchase/:buyer', (req, res) => {
+    const findBook = req.params.buyer;
+
+    const sqlSelect = "SELECT * FROM bookish_calgarian_db.books WHERE Buyer_ID = ?;"
+    db.query(sqlSelect, findBook, (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(result);
+            res.send(result);
+    });
+});
+
+app.get('/api/searchSold/:seller', (req, res) => {
+    const findBook = req.params.seller;
+
+    const sqlSelect = "SELECT * FROM bookish_calgarian_db.books WHERE Seller_ID = ? AND Buyer_ID IS NOT NULL;"
+    db.query(sqlSelect, findBook, (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(result);
+        res.send(result);
+    });
+});
+
+app.get('/api/searchSale/:seller', (req, res) => {
+    const findBook = req.params.seller;
+
+    const sqlSelect = "SELECT * FROM bookish_calgarian_db.books WHERE Seller_ID = ? AND Buyer_ID IS NULL;"
+    db.query(sqlSelect, findBook, (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(result);
+        res.send(result);
+    });
+});
+
+app.delete('/api/deleteBook/:book', (req, res) => {
+    const delete_book = req.params.book;
+
+    const sqlDELETE = "DELETE FROM bookish_calgarian_db.books WHERE Book_ID = ?;"
+    db.query(sqlDELETE, delete_book, (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(`Successfully deleted Book_ID ${delete_book}.`);
+    });
+});
+
+app.put('/api/updateBook', (req, res) => {
+    const book_id = req.body.a_book_id;
+    const title = req.body.a_title;
+    const price = req.body.a_price;
+    const isbn = req.body.a_isbn;
+    const author = req.body.a_author;
+    const quality = req.body.a_quality;
+    const pubDate = req.body.a_pubDate;
+    const lang = req.body.a_lang;
+    const genre = req.body.a_genre;
+    const pageC = req.body.a_pageC;
+    const wordC = req.body.a_wordC;
+    const bookstore = req.body.a_bookstore;
+    const shelf = req.body.a_shelf;
+
+    const sqlUpdate = "UPDATE bookish_calgarian_db.books SET Title = ?, Price = ?, ISBN = ?, Author = ?, Quality = ?, Publication_date = ?, Written_language = ?, Genre = ?, Page_count = ?, Word_count = ?, Bookstore = ?, Shelf = ? WHERE Book_ID = ?"
+    db.query(sqlUpdate, [title, price, isbn, author, quality, pubDate, lang,
+                         genre, pageC, wordC, bookstore, shelf, book_id], (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(`Successfully updated ${book_id}.`);
+    });
+
+    /*
+   
+
+    const sqlInsert = "INSERT INTO bookish_calgarian_db.books VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,?);"
+    db.query(sqlInsert, [book_id, title, price, isbn, author, quality, pubDate, lang, 
+                         genre, pageC, wordC, bookstore, shelf, null, null ], (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log("Successfully inserted book.");
+    });
+    */
+});
+
+
+app.get('/api/wishlist/:user', (req, res) => {
+    const findWishlist = req.params.user;
+
+    const sqlSelect = "SELECT Book_ID FROM bookish_calgarian_db.wishlist WHERE Wishlist_ID = ?;"
+    db.query(sqlSelect, findWishlist, (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(result);
+            res.send(result);
+    });
+});
+
+app.get('/api/wishlistBooks', (req, res) => {
+    const findBooks = req.body.IDs;
+
+    const sqlSelect = "SELECT * FROM bookish_calgarian_db.books WHERE Book_ID IN (?);"
+    db.query(sqlSelect, findBooks, (err, result) => {
+        if (err)
+            console.log(err);
+        else
+            console.log(result);
+            res.send(result);
+    });
 });
 
 app.listen(3001, () => {

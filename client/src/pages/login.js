@@ -10,9 +10,11 @@ import Form from "react-bootstrap/Form"
 import Row from "react-bootstrap/Row"
 import Layout from "../components/layout"
 
+
 function LoginPage() {
     const [user_id, setUserID] = useState('');
     const [user_pass, setPassword] = useState('');
+
     // citation: https://blog.logrocket.com/how-to-secure-react-app-login-authentication/
     const auth = async () => {
         try {
@@ -21,6 +23,8 @@ function LoginPage() {
         } catch (e) {
             console.log(e);
         }
+
+        
     };
     // end of citation
 

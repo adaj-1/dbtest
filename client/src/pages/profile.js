@@ -6,51 +6,262 @@ import Col from 'react-bootstrap/Col';
 import Layout from "../components/layout";
 import Axios from 'axios';
 import LoginPage from './login';
-
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
 
 export const ProfilePage = () => {
   const [user, setUser] = useState(false);
   const [admin, setAdmin] = useState(false);
   const [auth, setAuth] = useState(false);
-  const test = true;
   
-  useEffect(() => {
-    Axios.get('http://localhost:3001/read-cookie').then((response) => {
-      localStorage.setItem("user_type", response.data); 
-    })
-  }, [])
+  const testUser = 'user';
 
-  const Profile = () => {
-  
-  }
+  const [userList, setUserList] = useState([]);
+  const [purchaseList, setPurchaseList] = useState([]);
+  const [sellList, setSellList] = useState([]);
+  const [saleList, setSaleList] = useState([]);
+
+  const [title, setTitle] = useState('');
+  const [price, setPrice] = useState('');
+  const [isbn, setISBN] = useState('');
+  const [author, setAuthor] = useState('');
+  const [quality, setQuality] = useState('');
+  const [pubDate, setPubDate] = useState('');
+  const [lang, setLang] = useState('');
+  const [genre, setGenre] = useState('');
+  const [pageC, setPageC] = useState('');
+  const [wordC, setWordC] = useState('');
+  const [bookstore, setBookstore] = useState('');
+  const [shelf, setShelf] = useState('');
+
+
+  useEffect(() => {
+    Axios.get(`http://localhost:3001/api/searchUsers/${testUser}`).then((response) => {
+      setUserList(response.data);
+    });
+
+    Axios.get(`http://localhost:3001/api/searchPurchase/${testUser}`).then((response) => {
+      setPurchaseList(response.data);
+    });
+
+    Axios.get(`http://localhost:3001/api/searchSold/${testUser}`).then((response) => {
+      setSellList(response.data);
+    });
+
+    Axios.get(`http://localhost:3001/api/searchSale/${testUser}`).then((response) => {
+      setSaleList(response.data);
+    });
+  },[]);
+
+  const deleteBook = (book_id) => {
+    Axios.delete(`http://localhost:3001/api/deleteBook/${book_id}`);
+  };
+
+
+  const updateBook = (updatebook) => {
+    Axios.put("http://localhost:3001/api/updateBook", {
+      a_book_id: updatebook,
+      a_title: title,
+      a_price: price,
+      a_isbn: isbn,
+      a_author: author,
+      a_quality: quality,
+      a_pubDate: pubDate,
+      a_lang: lang,
+      a_genre: genre,
+      a_pageC: pageC,
+      a_wordC: wordC,
+      a_bookstore: bookstore,
+      a_shelf: shelf,
+    });
+  };
 
   return (
     <Layout pageTitle="My Profile">
       <h1 class="text-center display-4">My Profile</h1>
-      <p>According to your purchase and sales history, you are eligible for <b>9</b> remaining discounts!</p>
+      {userList.map((val) => {
+        return <p>
+          According to your purchase and sales history, you are eligible for <b>{val.Buyer_discount_usage}</b> remaining buyer discounts and <b>{val.Seller_discount_usage}</b> remaining seller discounts!
+            </p>
+      })}
+      
+      <br></br>
 
-      <h3>My Discounts</h3>
-      <Col xs="4">
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Date Earned</th>
-              <th scope="col">Status</th>
+      <h3>My Books On Sale</h3>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Price</th>
+            <th scope="col">Book ID</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">Author</th>
+            <th scope="col">Quality</th>
+            <th scope="col">Publication</th>
+            <th scope="col">Language</th>
+            <th scope="col">Genre</th>
+            <th scope="col">Bookstore</th>
+            <th scope="col">Shelf</th>
+            <th scope="col">Manage</th>
+          </tr>
+          {saleList.map((val, index) => {
+            return <tr>
+              <td>{index + 1}</td>
+              <td>{val.Title}</td>
+              <td>{val.Price}</td>
+              <td>{val.Book_ID}</td>
+              <td>{val.ISBN}</td>
+              <td>{val.Author}</td>
+              <td>{val.Quality}</td>
+              <td>{val.Publication_date}</td>
+              <td>{val.Written_language}</td>
+              <td>{val.Genre}</td>
+              <td>{val.Bookstore}</td>
+              <td>{val.Shelf}</td>
+              <td>
+                <button type='button' className="btn btn-success btn-sm" onClick={() => { updateBook(val.Book_ID) }}>Update</button>
+                <button type='button' className="btn btn-danger btn-sm mx-1" onClick={() => { deleteBook(val.Book_ID) }}>Delete</button>
+              </td>
             </tr>
-            <tr>
-              <td scope="row">1</td>
-              <td>10/03/2021</td>
-              <td class="text-danger"><b>Used</b></td>
-            </tr>
-            <tr>
-              <td scope="row">2</td>
-              <td>07/03/2022</td>
-              <td class="text-success"><b>Unused</b></td>
-            </tr>
-          </thead>
-        </table>
-      </Col>
+          })}
+        </thead>
+      </table>
+
+      <br></br>
+
+      <h3>Update Book</h3>
+      <Form>
+        <Row>
+          <Col>
+            <Form.Label>Title</Form.Label>
+            <Form.Control type="text" placeholder="Book Title" onChange={(e) => { setTitle(e.target.value) }} />
+          </Col>
+          <Col>
+            <Form.Label>Price</Form.Label>
+            <Form.Control type="number" placeholder="($) CAD" onChange={(e) => { setPrice(e.target.value) }} />
+          </Col>
+          <Col>
+            <Form.Label>ISBN</Form.Label>
+            <Form.Control type="number" placeholder="ISBN" onChange={(e) => { setISBN(e.target.value) }} />
+          </Col>
+          <Col>
+            <Form.Label>Author</Form.Label>
+            <Form.Control type="text" placeholder="Author" onChange={(e) => { setAuthor(e.target.value) }} />
+          </Col>
+        </Row>
+
+        <br></br>
+
+        <Row>
+          <Col>
+            <Form.Label>Publication Date</Form.Label>
+            <Form.Control type="date" onChange={(e) => { setPubDate(e.target.value) }} />
+          </Col>
+          <Col>
+            <Form.Label>Page Count</Form.Label>
+            <Form.Control type="text" placeholder="Page Count" onChange={(e) => { setPageC(e.target.value) }} />
+          </Col>
+          <Col>
+            <Form.Label>Word Count</Form.Label>
+            <Form.Control type="text" placeholder="Optional" onChange={(e) => { setWordC(e.target.value) }} />
+          </Col>
+        </Row>
+
+        <br></br>
+
+        <Row>
+          <Col>
+            <Form.Label>Fiction/Non-Fiction</Form.Label>
+            <Form.Select aria-label="Genre" onChange={(e) => { setGenre(e.target.value) }} >
+              <option selected>Select Option</option>
+              <option value="Fiction">Fiction</option>
+              <option value="Non-Fiction">Non-Fiction</option>
+            </Form.Select>
+          </Col>
+          <Col>
+            <Form.Label>Fiction Category</Form.Label>
+            <Form.Select aria-label="Fiction">
+              <option selected>Select Option</option>
+              <option value="Fantasy">Fantasy</option>
+              <option value="Science Fiction">Science Fiction</option>
+              <option value="Dystopian">Dystopian</option>
+              <option value="Adventure">Adventure</option>
+              <option value="Romance">Romance</option>
+              <option value="Detetive & Mystery">Detective & Mystery</option>
+              <option value="Horror">Horror</option>
+              <option value="Thriller">Thriller</option>
+              <option vlaue="LGBTQ+">LGBTQ+</option>
+              <option value="Historical Fiction">Historical Fiction</option>
+              <option value="Young Adult (YA)">Young Adult (YA)</option>
+              <option value="Children's Fiction">Children's Fiction</option>
+            </Form.Select>
+          </Col>
+          <Col>
+            <Form.Label>Non-Fiction Category</Form.Label>
+            <Form.Select aria-label="Non-Fiction" disabled>
+              <option selected>Select Option</option>
+              <option value="Memoir & Autobiography">Memoir & Autobiography</option>
+              <option value="Biography">Biography</option>
+              <option value="Cooking">Cooking</option>
+              <option value="Art & Photography">Art & Photography</option>
+              <option value="Self-Help/Personal Development">Self-Help/Personal Development</option>
+              <option value="Motivational/Inspirational">Motivational/Inspirational</option>
+              <option value="Health & Fitness">Health & Fitness</option>
+              <option value="History">History</option>
+              <option value="Crafts, Hobbies & Home">Crafts, Hobbies & Home</option>
+              <option value="Families & Relationships">Families & Relationships</option>
+              <option value="Humor & Entertainment">Humor & Entertainment</option>
+              <option value="Business & Money">Business & Money</option>
+              <option value="Law & Criminology">Law & Criminology</option>
+              <option value="Politics & Social Sciences">Politics & Social Sciences</option>
+              <option value="Religion & Spirituality">Religion & Spirituality</option>
+              <option value="Education & Teaching">Education & Teaching</option>
+              <option value="Travel">Travel</option>
+              <option value="True Crime">True Crime</option>
+            </Form.Select>
+          </Col>
+        </Row>
+
+        <br></br>
+
+        <Row>
+          <Col>
+            <Form.Label>Quality</Form.Label>
+            <Form.Select onChange={(e) => { setQuality(e.target.value) }} >
+              <option value="New Condition">New Condition</option>
+              <option value="Used Condition">Used Condition</option>
+              <option value="Bad Condition">Bad Condition</option>
+            </Form.Select>
+          </Col>
+          <Col>
+            <Form.Label>Language</Form.Label>
+            <Form.Select aria-label="Language" onChange={(e) => { setLang(e.target.value) }} >
+              <option value="English">English</option>
+              <option value="Chinese">Chinese</option>
+              <option value="Spanish">Spanish</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Portugese">Portugese</option>
+              <option value="Bengali">Bengali</option>
+              <option value="Russian">Russian</option>
+            </Form.Select>
+          </Col>
+          <Col>
+            <Form.Label>Bookstore</Form.Label>
+            <Form.Control type="text" placeholder="Bookstore" onChange={(e) => { setBookstore(e.target.value) }} />
+          </Col>
+          <Col>
+            <Form.Label>Shelf</Form.Label>
+            <Form.Control type="text" placeholder="Shelf" onChange={(e) => { setShelf(e.target.value) }} />
+          </Col>
+        </Row>
+
+        <br></br>
+
+      </Form>
+
+      
 
       <br></br>
 
@@ -65,20 +276,28 @@ export const ProfilePage = () => {
             <th scope="col">ISBN</th>
             <th scope="col">Author</th>
             <th scope="col">Quality</th>
-            <th scope="col">Transaction Date</th>
+            <th scope="col">Publication</th>
+            <th scope="col">Language</th>
+            <th scope="col">Genre</th>
             <th scope="col">Bookstore</th>
+            <th scope="col">Shelf</th>
           </tr>
-          <tr>
-            <th scope="row">1</th>
-            <td>The Great Gatsby</td>
-            <td>$3.99</td>
-            <td>0000001</td>
-            <td>9780333791035</td>
-            <td>F. Scott Fitzgerald</td>
-            <td>New Condition</td>
-            <td>10/03/2021</td>
-            <td>Fish Creek Provincial Bookstore</td>
-          </tr>
+          {purchaseList.map((val, index) => {
+            return <tr>
+              <td>{index + 1}</td>
+              <td>{val.Title}</td>
+              <td>{val.Price}</td>
+              <td>{val.Book_ID}</td>
+              <td>{val.ISBN}</td>
+              <td>{val.Author}</td>
+              <td>{val.Quality}</td>
+              <td>{val.Publication_date}</td>
+              <td>{val.Written_language}</td>
+              <td>{val.Genre}</td>
+              <td>{val.Bookstore}</td>
+              <td>{val.Shelf}</td>
+            </tr>
+          })}
         </thead>
       </table>
 
@@ -95,20 +314,28 @@ export const ProfilePage = () => {
             <th scope="col">ISBN</th>
             <th scope="col">Author</th>
             <th scope="col">Quality</th>
-            <th scope="col">Transaction Date</th>
+            <th scope="col">Publication</th>
+            <th scope="col">Language</th>
+            <th scope="col">Genre</th>
             <th scope="col">Bookstore</th>
+            <th scope="col">Shelf</th>
           </tr>
-          <tr>
-            <th scope="row">1</th>
-            <td>To Kill A Mockingbird</td>
-            <td>$17.99</td>
-            <td>0000023</td>
-            <td>9780060173227</td>
-            <td>Harper Lee</td>
-            <td>New Condition</td>
-            <td>10/03/2021</td>
-            <td>Fish Creek Provincial Bookstore</td>
-          </tr>
+          {sellList.map((val, index) => {
+            return <tr>
+              <td>{index + 1}</td>
+              <td>{val.Title}</td>
+              <td>{val.Price}</td>
+              <td>{val.Book_ID}</td>
+              <td>{val.ISBN}</td>
+              <td>{val.Author}</td>
+              <td>{val.Quality}</td>
+              <td>{val.Publication_date}</td>
+              <td>{val.Written_language}</td>
+              <td>{val.Genre}</td>
+              <td>{val.Bookstore}</td>
+              <td>{val.Shelf}</td>
+            </tr>
+          })}
         </thead>
       </table>
     </Layout>
