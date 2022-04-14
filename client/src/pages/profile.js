@@ -21,19 +21,20 @@ export const ProfilePage = () => {
     });
 
   },[]);
-  /*
-  {userList && (
-      <p>
-        According to your purchase and sales history, you are eligible for <b>{userList[0].Buyer_discount_usage}</b> remaining buyer discounts and <b>{userList[0].Seller_discount_usage}</b> remaining seller discounts!
-      </p>
-      )}
 
-  */
+
+
 
   return (
     <Layout pageTitle="My Profile">
       <h1 class="text-center display-4">My Profile</h1>
-    
+
+      {userList && (
+        <p>
+          According to your purchase and sales history, you are eligible for <b>{userList[0].Buyer_discount_usage}</b> remaining buyer discounts and <b>{userList[0].Seller_discount_usage}</b> remaining seller discounts!
+        </p>
+      )}
+      
       <h3>My Purchase History</h3>
       <table class="table table-sm">
         <thead>
