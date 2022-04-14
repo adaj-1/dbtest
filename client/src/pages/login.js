@@ -15,18 +15,19 @@ function LoginPage() {
     const [user_id, setUserID] = useState('');
     const [user_pass, setPassword] = useState('');
 
-    // citation: https://blog.logrocket.com/how-to-secure-react-app-login-authentication/
-    const auth = async () => {
-        try {
-            const res = await Axios.get('http://localhost:3001/authenticate', { auth: { username: user_id, password: user_pass } });
-            console.log(res.data);
-        } catch (e) {
-            console.log(e);
-        }
-
-        
+    const authenticate = () => {
+        Axios.get(`http://localhost:3001/authenticate/${user_id}&${user_pass}`, {
+            params: {
+                user: user_id,
+                pass: user_pass 
+            }
+        }).then((response) => {
+            localStorage.setItem('User', response.data[0].User_ID);
+            console.log(localStorage.getItem('User'));
+            localStorage.setItem('Priv', response.data[0].Privilege);
+            console.log(localStorage.getItem('Priv'));
+        });
     };
-    // end of citation
 
     return(
         <Layout pageTitle="The Bookish Calgarian">
@@ -49,7 +50,7 @@ function LoginPage() {
                         <Form.Control type="text" onChange={(e) => { setPassword(e.target.value) }} />
                     </Col>
                 </Row>
-                <Button class="btn btn-primary" onClick={auth}>Login</Button>
+                <Button class="btn btn-primary" onClick={() => { authenticate();  window.location.reload(); }}>Login</Button>
             </Form>
             <br></br>
             <br></br>
