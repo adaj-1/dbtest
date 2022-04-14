@@ -22,7 +22,7 @@ const Navigation = () => {
         <Nav.Link href="/books">Search Books</Nav.Link>
         <Nav.Link href="/wishlist">My Wishlist</Nav.Link>
         <Nav.Link href="/profile">My Profile</Nav.Link>
-        <Nav.Link href='/store'>My Store</Nav.Link>
+        <Nav.Link href='/store'>Manage Books</Nav.Link>
         {admin && (
         <Nav.Link href="/customers">Search Customers </Nav.Link>
         )}
